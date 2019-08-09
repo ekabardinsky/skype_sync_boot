@@ -2,11 +2,15 @@ const skypeHttp = require("skype-http");
 const integrations = require("./integrations");
 const request = require('request-promise');
 
+const username = process.env.SKYPE_LOGIN;
+const password = process.env.SKYPE_PASSWORD;
+
 (async () => {
+    console.log(`Try to login using "${username}" username`)
     const api = await skypeHttp.connect({
         credentials: {
-            username: process.env.SKYPE_LOGIN,
-            password: process.env.SKYPE_PASSWORD
+            username,
+            password
         }
     });
 
