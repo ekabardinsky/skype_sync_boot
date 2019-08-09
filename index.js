@@ -17,9 +17,9 @@ const password = process.env.SKYPE_PASSWORD;
     const me = api.context.username;
 
     // log available conversation
-    const conversations = await api.getConversations();
-    console.log('Available conversations');
-    console.log(JSON.stringify(conversations, null, 2));
+    const contacts = await api.getContacts();
+    console.log('Available conversations:');
+    console.log(JSON.stringify(contacts, null, 2));
 
     // Log every event
     api.on("event", (event) => {
@@ -34,24 +34,36 @@ const password = process.env.SKYPE_PASSWORD;
     await api.listen();
 
     function onNewMessage(event) {
+        if (event.resource.type != 'RichText' && event.resource.type != 'Text') {
+            // wrong message type - just skip
+            return;
+        }
+
         const content = event.resource.content;
         const toId = event.resource.conversation;
         const toThread = event.resource.native.threadtopic;
         const from = event.resource.native.imdisplayname;
+        const fromId = event.resource.from.username;
+        const toTitle = toThread ? toThread : contacts.find(contact => contact.personId === toId).displayName;
 
-        const triggeredIntegration = integrations.pipes.find(integration =>
-            (!toThread && toId.toLowerCase().includes(integration.from.toLowerCase()))
-            || (toThread && toThread.toLowerCase().includes(integration.from.toLowerCase()))
-        );
+        if (fromId == me) {
+            // outgoing message
+            const triggeredIntegration = integrations.pipes.find(integration =>
+                (!toThread && toId.toLowerCase().includes(integration.from.toLowerCase()))
+                || (toThread && toThread.toLowerCase().includes(integration.from.toLowerCase()))
+            );
 
-        if (triggeredIntegration) {
-            console.log(`Sent a message to the target in the following integration: ${JSON.stringify(triggeredIntegration)}`);
-            (async () => {
-                console.log(`Try to send message from ${from}`);
-                await send(from, content, triggeredIntegration)
-            })();
-
+            if (triggeredIntegration) {
+                console.log(`Sent a message to the target in the following integration: ${JSON.stringify(triggeredIntegration)}`);
+                (async () => {
+                    const direction = `"${from}" >>> "${toTitle}"`;
+                    console.log(`Try to sync message ${direction}`);
+                    await send(`${direction}`, content, triggeredIntegration)
+                })();
+            }
         }
+
+
     }
 
     function onMessage(event) {
@@ -86,7 +98,7 @@ const password = process.env.SKYPE_PASSWORD;
         if (!fromThread || fromUser === fromThread) {
             return fromUser;
         } else {
-            return `From "${fromUser}" in "${fromThread}"`;
+            return `"${fromThread}" <<< "${fromUser}"`;
         }
     }
 
@@ -99,7 +111,7 @@ const password = process.env.SKYPE_PASSWORD;
     async function sendSlack(from, content, slackWebHook) {
         const body = {
             username: from,
-            text: content
+            text: cleanMessage(content)
         };
         console.log(`Send message to: ${from}`);
 
@@ -111,6 +123,17 @@ const password = process.env.SKYPE_PASSWORD;
         });
 
         console.log(`Response from webhook: ${JSON.stringify(response)}`);
+    }
+
+    function cleanMessage(message) {
+        return message
+            .replace(/<quote .*><legacyquote>/, '```\n<legacyquote>')
+            .replace(/<legacyquote>/g, '')
+            .replace(/<\/legacyquote>/g, '')
+            .replace(/<\/quote>/g, '```\n')
+            .replace(/\[.*\]/, '')
+            .replace(/<<</, '')
+            .replace(/&lt;&lt;&lt;/g, '');
     }
 })();
 
