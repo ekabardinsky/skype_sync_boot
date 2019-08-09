@@ -6,7 +6,7 @@ const username = process.env.SKYPE_LOGIN;
 const password = process.env.SKYPE_PASSWORD;
 
 (async () => {
-    console.log(`Try to login using "${username}" username`)
+    console.log(`Try to login using "${username}" username`);
     const api = await skypeHttp.connect({
         credentials: {
             username,
@@ -40,8 +40,11 @@ const password = process.env.SKYPE_PASSWORD;
         );
 
         if (triggeredIntegration) {
+            console.log(`Got a message for the following integration${JSON.stringify(triggeredIntegration)}`);
             (async () => {
-                await send(getUserTitle(fromUser, fromThread), content, triggeredIntegration)
+                const userTitle = getUserTitle(fromUser, fromThread);
+                console.log(`Try to send message from ${userTitle}`);
+                await send(userTitle, content, triggeredIntegration)
             })();
         }
     }
@@ -74,7 +77,7 @@ const password = process.env.SKYPE_PASSWORD;
             json: true
         });
 
-        console.log(response);
+        console.log(`Response from webhook: ${JSON.stringify(response)}`);
     }
 })();
 
