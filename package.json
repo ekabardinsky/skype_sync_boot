@@ -1,0 +1,11 @@
+{
+  "name": "skypeboot",
+  "version": "1.0.0",
+  "description": "The skypeboot to read you messages and send them to sclak webhook",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
