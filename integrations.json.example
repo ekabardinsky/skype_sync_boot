@@ -1,0 +1,19 @@
+{
+  "pipes": [
+    {
+      "from": "live:sdnjsdfjksm",
+      "type": "slack",
+      "slackWebHook": "https://hooks.slack.com/services/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    },
+    {
+      "from": "Someone",
+      "type": "slack",
+      "slackWebHook": "https://hooks.slack.com/services/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    },
+    {
+      "from": "Test chat",
+      "type": "slack",
+      "slackWebHook": "https://hooks.slack.com/services/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    }
+  ]
+}
