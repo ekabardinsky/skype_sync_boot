@@ -2,9 +2,11 @@
 
 Skype sync bot help you to listen messages in skype and resend them into the slack. I don't care why do you need that, but this bot can do that.
 
-#### Firstly, configure integrations.json to point up which messages should gone to the slack
-
-#### To start listen skype chats and forward messages to the slack, just run the following command:
+#### Steps to get sync bot configured:
+* Firstly, configure integrations.json to point up which messages should gone to the slack
+* Build a docker image, to run it in background: ```docker build --tag="skype-sync-boot" .```
+* Run the image: ```docker run --name skype-boot -e SKYPE_LOGIN=login -e SKYPE_PASSWORD=password --restart always -d skype-sync-boot```
+#### Or just start it by the following command:
 ```shell script
 export SKYPE_LOGIN=login; export SKYPE_PASSWORD=password; node index.js
 ```
