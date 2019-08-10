@@ -2,13 +2,13 @@
   "pipes": [
     {
       "from": "live:sdnjsdfjksm",
-      "type": "slack",
-      "slackWebHook": "https://hooks.slack.com/services/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+      "slackWebHook": "https://hooks.slack.com/services/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "skypeTarget": "skypeUserName"
     },
     {
       "from": "Test chat",
-      "type": "slack",
-      "slackWebHook": "https://hooks.slack.com/services/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+      "slackWebHook": "https://hooks.slack.com/services/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "skypeTarget": "Target chat"
     }
   ]
 }
