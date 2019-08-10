@@ -18,8 +18,11 @@ const password = process.env.SKYPE_PASSWORD;
 
     // log available conversation
     const contacts = await api.getContacts();
-    console.log('Available conversations:');
+    const conversations = await api.getConversations();
+    console.log('Available contacts:');
     console.log(JSON.stringify(contacts, null, 2));
+    console.log('Available conversation:');
+    console.log(JSON.stringify(conversations, null, 2));
 
     // Log every event
     api.on("event", (event) => {
@@ -58,12 +61,17 @@ const password = process.env.SKYPE_PASSWORD;
                 (async () => {
                     const direction = `"${from}" >>> "${toTitle}"`;
                     console.log(`Try to sync message ${direction}`);
-                    await send(`${direction}`, content, triggeredIntegration)
+                    await send(`${direction}`, content, triggeredIntegration, event.resource, api)
                 })();
             }
         }
+    }
 
-
+    function getConversationByTarget(target) {
+        return conversations.find(conversation => {
+            return conversation.id.toLowerCase().includes(target.toLowerCase()) ||
+                (conversation.threadProperties && target.toLowerCase().includes(conversation.threadProperties.topic.toLowerCase()))
+        }).id;
     }
 
     function onMessage(event) {
@@ -102,10 +110,23 @@ const password = process.env.SKYPE_PASSWORD;
         }
     }
 
-    async function send(from, content, integration) {
-        if (integration.type.toLowerCase() === 'slack') {
+    async function send(from, content, integration, event, api) {
+        if (integration.slackWebHook) {
             await sendSlack(from, content, integration.slackWebHook);
         }
+        if (integration.skypeTarget) {
+            await sendSkype(event, api, integration.skypeTarget);
+        }
+    }
+
+    async function sendSkype(event, api, target) {
+        const textContent = getQuote(event);
+        await api.sendMessage({textContent: getQuote(event)}, getConversationByTarget(target))
+    }
+
+    function getQuote(event) {
+        const timestamp = Math.round(event.composeTime.getTime() / 1000);
+        return `<quote author="${event.from.username}" authorname="${event.native.imdisplayname}" timestamp="${timestamp}" conversation="${event.conversation} messageid="${event.id}"><legacyquote>[${timestamp}] ${event.native.imdisplayname}: </legacyquote>${event.content}<legacyquote>&lt;&lt;&lt; </legacyquote></quote>`;
     }
 
     async function sendSlack(from, content, slackWebHook) {
