@@ -97,7 +97,7 @@ const password = process.env.SKYPE_PASSWORD;
             (async () => {
                 const userTitle = getUserTitle(fromUser, fromThread);
                 console.log(`Try to send message from ${userTitle}`);
-                await send(userTitle, content, triggeredIntegration)
+                await send(userTitle, content, triggeredIntegration, event, api)
             })();
         }
     }
