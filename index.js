@@ -37,7 +37,11 @@ const password = process.env.SKYPE_PASSWORD;
     await api.listen();
 
     function onNewMessage(event) {
-        if (event.resource.type != 'RichText' && event.resource.type != 'Text' && event.resource.type != 'RichText/UriObject') {
+        if (event.resource.type !== 'RichText'
+            && event.resource.type !== 'Text'
+            && event.resource.type !== 'RichText/UriObject'
+            && event.resource.type !== 'RichText/Media_GenericFile'
+            && event.resource.type !== 'RichText/Media_Video') {
             // wrong message type - just skip
             return;
         }
@@ -81,7 +85,11 @@ const password = process.env.SKYPE_PASSWORD;
     }
 
     function onMessage(event) {
-        if (event.type != 'RichText' && event.type != 'Text' && event.type != 'RichText/UriObject') {
+        if (event.type !== 'RichText'
+            && event.type !== 'Text'
+            && event.type !== 'RichText/UriObject'
+            && event.type !== 'RichText/Media_GenericFile'
+            && event.type !== 'RichText/Media_Video') {
             // wrong message type - just skip
             return;
         }
@@ -127,16 +135,26 @@ const password = process.env.SKYPE_PASSWORD;
 
     async function sendSkype(event, api, target) {
         const conversationId = getConversationByTarget(target);
-        if (event.type === 'RichText/UriObject') {
-            let utils = new UriObjectUtils(api);
-            const uri = event.uri + '/views/imgt1_anim';
+        if (event.type === 'RichText/UriObject' || event.type === 'RichText/Media_GenericFile' || event.type === 'RichText/Media_Video') {
+            const utils = new UriObjectUtils(api);
+            let uri = event.uri;
+
+            if (event.type === 'RichText/Media_Video') {
+                uri += '/views/video';
+            }  else if (event.uri_thumbnail.includes('/views/original')) {
+                uri += '/views/original';
+            } else {
+                uri += '/views/imgpsh_mobile_save_anim';
+            }
+
             const destinationFileName = `temp/${new Date().getTime()}_${event.original_file_name}`;
 
             await utils.downloadUriObject(uri, destinationFileName);
-            await api.sendImage({
-                file: destinationFileName,
-                name: event.original_file_name
-            }, conversationId);
+            const upload = await new UriObjectUtils().uploadFile(destinationFileName, event.original_file_name);
+
+            const content = `<a href="${upload.url}">${upload.pageUrl}</a>`;
+
+            await api.sendMessage({textContent: content}, conversationId)
         } else {
             // the common case
             const textContent = getQuote(event);

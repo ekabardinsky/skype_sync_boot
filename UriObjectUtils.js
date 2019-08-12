@@ -1,5 +1,3 @@
-const messagesUri = require("skype-http/messages-uri");
-const Incident = require("incident").Incident;
 const request = require('request-promise');
 const fs = require("async-file");
 
@@ -21,5 +19,38 @@ class UriObjectUtils {
 
         await fs.writeFile(filename, Buffer.from(body, 'binary'))
     }
+
+    async uploadFile(targetFilePath, originFileName, type) {
+        const uri = 'https://anonfile.com/api/upload';
+        var options = {
+            method: 'POST',
+            uri,
+            formData: {
+                // Like <input type="text" name="name">
+                name: 'Jenn',
+                // Like <input type="file" name="file">
+                file: {
+                    value: fs.createReadStream(targetFilePath),
+                    options: {
+                        filename: originFileName
+                    }
+                }
+            },
+            headers: {
+                /* 'content-type': 'multipart/form-data' */ // Is set automatically
+            }
+        };
+
+        const upload = JSON.parse(await request(options));
+
+        const page = await request(upload.data.file.url.full);
+
+        const matches = page.match(/href=\"(.*)\"><img/);
+        return {
+            url: matches[1],
+            pageUrl: upload.data.file.url.full
+        };
+    }
 }
+
 module.exports = UriObjectUtils;
