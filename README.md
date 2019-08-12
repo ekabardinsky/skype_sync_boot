@@ -1,4 +1,4 @@
-# skype_sync_boot
+# Skype sync boot
 
 Skype sync bot help you to listen messages in skype and resend them into the slack/skype. I don't care why do you need that, but this bot can do that.
 
