@@ -1,6 +1,6 @@
 # skype_sync_boot
 
-Skype sync bot help you to listen messages in skype and resend them into the slack. I don't care why do you need that, but this bot can do that.
+Skype sync bot help you to listen messages in skype and resend them into the slack/skype. I don't care why do you need that, but this bot can do that.
 
 #### Steps to get sync bot configured:
 * Create/configure `integrations.json` to point up which messages should gone to the slack (`from`: skype id for regular user or chat name)
