@@ -1,3 +1,4 @@
 .idea
 configs/integrations.json
 node_modules
+temp

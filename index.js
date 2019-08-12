@@ -1,5 +1,6 @@
 const skypeHttp = require("skype-http");
 const request = require('request-promise');
+const UriObjectUtils = require('./UriObjectUtils');
 
 const username = process.env.SKYPE_LOGIN;
 const password = process.env.SKYPE_PASSWORD;
@@ -36,7 +37,7 @@ const password = process.env.SKYPE_PASSWORD;
     await api.listen();
 
     function onNewMessage(event) {
-        if (event.resource.type != 'RichText' && event.resource.type != 'Text') {
+        if (event.resource.type != 'RichText' && event.resource.type != 'Text' && event.resource.type != 'RichText/UriObject') {
             // wrong message type - just skip
             return;
         }
@@ -67,14 +68,20 @@ const password = process.env.SKYPE_PASSWORD;
     }
 
     function getConversationByTarget(target) {
-        return conversations.find(conversation => {
+        const conversation = conversations.find(conversation => {
             return conversation.id.toLowerCase().includes(target.toLowerCase()) ||
                 (conversation.threadProperties && target.toLowerCase().includes(conversation.threadProperties.topic.toLowerCase()))
-        }).id;
+        });
+
+        if (conversation) {
+            return conversation.id;
+        }
+
+        return contacts.find(contact => contact.personId.toLowerCase().includes(target.toLowerCase())).personId;
     }
 
     function onMessage(event) {
-        if (event.type != 'RichText' && event.type != 'Text') {
+        if (event.type != 'RichText' && event.type != 'Text' && event.type != 'RichText/UriObject') {
             // wrong message type - just skip
             return;
         }
@@ -119,13 +126,27 @@ const password = process.env.SKYPE_PASSWORD;
     }
 
     async function sendSkype(event, api, target) {
-        const textContent = getQuote(event);
-        await api.sendMessage({textContent: getQuote(event)}, getConversationByTarget(target))
+        const conversationId = getConversationByTarget(target);
+        if (event.type === 'RichText/UriObject') {
+            let utils = new UriObjectUtils(api);
+            const uri = event.uri + '/views/imgt1_anim';
+            const destinationFileName = `temp/${new Date().getTime()}_${event.original_file_name}`;
+
+            await utils.downloadUriObject(uri, destinationFileName);
+            await api.sendImage({
+                file: destinationFileName,
+                name: event.original_file_name
+            }, conversationId);
+        } else {
+            // the common case
+            const textContent = getQuote(event);
+            await api.sendMessage({textContent: textContent}, conversationId)
+        }
     }
 
     function getQuote(event) {
         const timestamp = Math.round(event.composeTime.getTime() / 1000);
-        return `<quote author="${event.from.username}" authorname="${event.native.imdisplayname}" timestamp="${timestamp}" conversation="${event.conversation} messageid="${event.id}"><legacyquote>[${timestamp}] ${event.native.imdisplayname}: </legacyquote>${event.content}<legacyquote>&lt;&lt;&lt; </legacyquote></quote>`;
+        return `<quote author="${event.from.username}" authorname="${event.native.imdisplayname}" timestamp="${timestamp}" conversation="${event.conversation} messageid="${event.id}"><legacyquote>[${timestamp}] ${event.native.imdisplayname}: </legacyquote>${event.native.content}<legacyquote>&lt;&lt;&lt; </legacyquote></quote>`;
     }
 
     async function sendSlack(from, content, slackWebHook) {
