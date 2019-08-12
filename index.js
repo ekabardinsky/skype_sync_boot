@@ -1,5 +1,4 @@
 const skypeHttp = require("skype-http");
-const integrations = require("./integrations");
 const request = require('request-promise');
 
 const username = process.env.SKYPE_LOGIN;
@@ -51,7 +50,7 @@ const password = process.env.SKYPE_PASSWORD;
 
         if (fromId == me) {
             // outgoing message
-            const triggeredIntegration = integrations.pipes.find(integration =>
+            const triggeredIntegration = require("./configs/integrations").pipes.find(integration =>
                 (!toThread && toId.toLowerCase().includes(integration.from.toLowerCase()))
                 || (toThread && toThread.toLowerCase().includes(integration.from.toLowerCase()))
             );
@@ -86,7 +85,7 @@ const password = process.env.SKYPE_PASSWORD;
         const fromThread = event.native.threadtopic;
         const content = event.content;
 
-        const triggeredIntegration = integrations.pipes.find(integration =>
+        const triggeredIntegration = require("./configs/integrations").pipes.find(integration =>
             (!fromThread && fromId.toLowerCase().includes(integration.from.toLowerCase()))
             || (!fromThread && fromUser.toLowerCase().includes(integration.from.toLowerCase()))
             || (fromThread && fromThread.toLowerCase().includes(integration.from.toLowerCase()))
