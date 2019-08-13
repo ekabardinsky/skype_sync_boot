@@ -7,5 +7,6 @@ RUN npm i
 
 COPY index.js index.js
 COPY configs/integrations.json integrations.json
+COPY UriObjectUtils.js UriObjectUtils.js
 
 CMD node index.js
