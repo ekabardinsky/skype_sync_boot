@@ -1,14 +1,24 @@
 {
+  "username64": "dXNlcm5hbWU=",
+  "password64": "cGFzc3dvcmQ=",
+  "username": "username",
+  "password": "password",
+  // username64 and password64 is base64 encoded values
+  // supply one of username or username64 and one of password or password64.
+  // you can use this https://www.base64encode.org/ to get you credentials base64 encoded
+
+  // array of integrations:
   "pipes": [
     {
-      "from": "live:sdnjsdfjksm",
-      "slackWebHook": "https://hooks.slack.com/services/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-      "skypeTarget": "skypeUserName"
+      "from": "live:sdnjsdfjksm", // listening this chat (please copy skype id, not a skype displayed name)
+      "slackWebHook": "https://hooks.slack.com/services/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", // a slack webhook
+      "skypeTarget": "skypeUserName" // Forward to this chat (please copy skype id, not a skype displayed name)
     },
     {
-      "from": "Test chat",
-      "slackWebHook": "https://hooks.slack.com/services/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-      "skypeTarget": "Target chat"
+      "from": "Test chat", // listening this conversation (please copy skype id, not a skype displayed name)
+      "slackWebHook": "https://hooks.slack.com/services/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", // a slack webhook
+      "skypeTarget": "Target chat" // Forward to this conversation (please copy skype id, not a skype displayed name)
     }
+    // you can supply only slackWebHook or skypeTarget or supply them both
   ]
 }
