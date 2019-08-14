@@ -1,15 +1,16 @@
 {
   "name": "skypeboot",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "The skypeboot to read you messages and send them to sclak webhook",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "skype-http": "0.0.15",
-    "request-promise": "^4.2.4"
+    "request-promise": "^4.2.4",
+    "node-cron": "^1.2.1"
   }
 }

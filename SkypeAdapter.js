@@ -1,11 +1,36 @@
 const skypeHttp = require("skype-http");
 const UriObjectUtils = require('./UriObjectUtils');
 const SlackAdapter = require('./SlackAdapter');
+const cron = require("node-cron");
 
 class SkypeAdapter {
     constructor(username, password) {
         this.username = username;
         this.password = password;
+        this.initConnectionChecker();
+    }
+
+    initConnectionChecker() {
+        this.connectionCheckerJob = cron.schedule("*/10 * * * *", async () => {
+            if (this.api) {
+                try {
+                    console.log("---------------------");
+                    console.log(`Check connection at ${new Date()}`);
+                    // just make a call
+                    const contacts = await this.api.getContacts();
+
+                    if (!contacts) {
+                        throw new Error("Empty response from the skype api");
+                    }
+                    console.log("Connection is fine");
+                    console.log("---------------------");
+                } catch (e) {
+                    console.log("------------------------------Exception occurred during connection checking------------------------------");
+                    console.log(e);
+                    console.log("---------------------------------------------------------------------------------------------------------");
+                }
+            }
+        });
     }
 
     async initIntegration() {
