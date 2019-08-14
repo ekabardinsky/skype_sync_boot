@@ -20,15 +20,12 @@ class UriObjectUtils {
         await fs.writeFile(filename, Buffer.from(body, 'binary'))
     }
 
-    async uploadFile(targetFilePath, originFileName, type) {
+    async uploadFile(targetFilePath, originFileName) {
         const uri = 'https://anonfile.com/api/upload';
         var options = {
             method: 'POST',
             uri,
             formData: {
-                // Like <input type="text" name="name">
-                name: 'Jenn',
-                // Like <input type="file" name="file">
                 file: {
                     value: fs.createReadStream(targetFilePath),
                     options: {
