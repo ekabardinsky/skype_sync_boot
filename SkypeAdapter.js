@@ -106,7 +106,7 @@ class SkypeAdapter {
 
     async send(from, integration, event) {
         // check targets
-        if (!integration.slackWebHook && integration.skypeTarget) {
+        if (!integration.slackWebHook && !integration.skypeTarget) {
             console.log(`No target specified for the following integration: ${JSON.stringify(integration)}`);
             return;
         }
