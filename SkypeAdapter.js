@@ -28,6 +28,7 @@ class SkypeAdapter {
                     console.log("------------------------------Exception occurred during connection checking------------------------------");
                     console.log(e);
                     console.log("---------------------------------------------------------------------------------------------------------");
+                    await this.initIntegration();
                 }
             }
         });
