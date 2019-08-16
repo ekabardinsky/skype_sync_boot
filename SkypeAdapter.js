@@ -11,7 +11,7 @@ class SkypeAdapter {
     }
 
     initConnectionChecker() {
-        this.connectionCheckerJob = cron.schedule("*/10 * * * *", async () => {
+        cron.schedule("*/10 * * * *", async () => {
             if (this.api) {
                 try {
                     console.log("---------------------");
