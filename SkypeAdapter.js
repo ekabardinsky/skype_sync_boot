@@ -11,24 +11,26 @@ class SkypeAdapter {
     }
 
     initConnectionChecker() {
-        cron.schedule("*/10 * * * *", async () => {
+        // call this each midnight
+        cron.schedule("0 0 * * *", async () => {
             if (this.api) {
                 try {
                     console.log("---------------------");
-                    console.log(`Check connection at ${new Date()}`);
-                    // just make a call
-                    const contacts = await this.api.getContacts();
+                    console.log(`Reset connection at ${new Date()}`);
 
-                    if (!contacts) {
-                        throw new Error("Empty response from the skype api");
-                    }
-                    console.log("Connection is fine");
+                    // stop listening
+                    await this.api.stopListening();
+
+                    // and recreate the api
+                    await this.initIntegration();
+
+                    console.log("Connection is recreated");
                     console.log("---------------------");
                 } catch (e) {
-                    console.log("------------------------------Exception occurred during connection checking------------------------------");
+                    console.log("------------------------------Exception occurred during connection reset------------------------------");
                     console.log(e);
                     console.log("---------------------------------------------------------------------------------------------------------");
-                    await this.initIntegration();
+                    process.exit(1)
                 }
             }
         });

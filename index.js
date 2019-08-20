@@ -8,6 +8,12 @@ const password = integrations.password ? integrations.password : Buffer.from(int
 const skype = new SkypeAdapter(username, password);
 
 (async () => {
-    await skype.initIntegration();
+    try {
+        await skype.initIntegration();
+    } catch (e) {
+        console.log('Get error to connect with live.com');
+        console.log(e)
+        process.exit(1)
+    }
 })();
 
