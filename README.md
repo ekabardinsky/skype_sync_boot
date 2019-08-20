@@ -7,7 +7,7 @@ Skype sync bot help you to listen messages in skype and resend them into the sla
 * Run the image: `docker run --name skype-boot -v path/to/your/configs:/configs -d skype-sync-boot`
 
 **NOTE: Microsoft can block login to the skype if unusual activity is detected (maybe you trying to run this bot on dedicated server or using VPN).
-Please approve that login (see email notification) or try to run bot on your local machine.**
+Please approve that login (see email notification) or try to run bot on your local machine. Also, try to login to the web version. Sometimes microsoft want to show you some notifications before you access skype. This prevent skype-boot to scrab token.**
 
 #### Or just start it by the following command:
 ```shell script
