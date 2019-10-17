@@ -51,6 +51,12 @@ class SlackAdapter {
             // recognized sender
             if (sender || channelContact) {
                 const senderName = channelContact ? `${sender.real_name} in ${channelContact.name}` : sender.real_name;
+                let message = text;
+
+                // loop over contacts and replace mentions
+                this.contacts
+                    .filter(contact => contact.profile)
+                    .forEach(contact => message = message.replace(`<@${contact.id}>`, `@${contact.profile.display_name ? contact.profile.display_name : contact.name}`));
 
                 const target = integrations.pipes
                     .find(pipe => pipe.from === sender.profile.display_name_normalized || pipe.from === sender.name || (channelContact && pipe.from === channelContact.name));
@@ -58,10 +64,10 @@ class SlackAdapter {
                 // pipe for sender found
                 if (target){
                     if (target.slackWebHook) {
-                        await this.send(senderName, text, target.slackWebHook);
+                        await this.send(senderName, message, target.slackWebHook);
                     } else if (this.skype && target.skypeTarget) {
                         const conversationId = await this.skype.getConversationByTarget(target.skypeTarget);
-                        await this.skype.api.sendMessage({textContent: `${senderName}:\n${text}`}, conversationId)
+                        await this.skype.api.sendMessage({textContent: `${senderName}:\n${message}`}, conversationId)
                     }
                 }
             }
