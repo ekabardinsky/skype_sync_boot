@@ -53,7 +53,7 @@ class SlackAdapter {
                 const senderName = channelContact ? `${sender.real_name} in ${channelContact.name}` : sender.real_name;
 
                 const target = integrations.pipes
-                    .find(pipe => pipe.from === sender.profile.display_name_normalized || (channelContact && pipe.from === channelContact.name));
+                    .find(pipe => pipe.from === sender.profile.display_name_normalized || pipe.from === sender.name || (channelContact && pipe.from === channelContact.name));
 
                 // pipe for sender found
                 if (target){
