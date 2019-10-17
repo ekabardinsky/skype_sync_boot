@@ -2,6 +2,7 @@ const skypeHttp = require("skype-http");
 const UriObjectUtils = require('./UriObjectUtils');
 const SlackAdapter = require('./SlackAdapter');
 const cron = require("node-cron");
+const integrations = require("./configs/integrations").skype;
 
 class SkypeAdapter {
     constructor(username, password) {
@@ -76,7 +77,7 @@ class SkypeAdapter {
         const toTitle = toThread ? toThread : this.contacts.find(contact => contact.personId === toId).displayName;
         if (fromId == this.api.context.username) {
             // outgoing message
-            const triggeredIntegration = require("./configs/integrations").pipes.find(integration =>
+            const triggeredIntegration = integrations.pipes.find(integration =>
                 (!toThread && toId.toLowerCase().includes(integration.from.toLowerCase()))
                 || (toThread && toThread.toLowerCase().includes(integration.from.toLowerCase()))
             );
@@ -92,7 +93,7 @@ class SkypeAdapter {
             const fromId = toId;
             const fromThread = toThread;
 
-            const triggeredIntegration = require("./configs/integrations").pipes.find(integration =>
+            const triggeredIntegration = integrations.pipes.find(integration =>
                 (!fromThread && fromId.toLowerCase().includes(integration.from.toLowerCase()))
                 || (!fromThread && from.toLowerCase().includes(integration.from.toLowerCase()))
                 || (fromThread && fromThread.toLowerCase().includes(integration.from.toLowerCase()))
@@ -138,7 +139,7 @@ class SkypeAdapter {
 
         // sending messages to targets
         if (integration.slackWebHook) {
-            await new SlackAdapter(integration.slackWebHook).send(from, event.native.content, integration.slackWebHook);
+            await SlackAdapter().send(from, event.native.content, integration.slackWebHook);
         }
         if (integration.skypeTarget) {
             await this.sendSkype(event, integration.skypeTarget);
