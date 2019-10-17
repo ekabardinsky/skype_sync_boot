@@ -1,5 +1,5 @@
 # Skype sync boot
-Skype sync bot help you to listen messages in skype and resend them into the slack/skype. I don't care why do you need that, but this bot can do that.
+Skype sync bot help you to listen messages in slack/skype and resend them into the slack/skype. I don't care why do you need that, but this bot can do that.
 
 #### Steps to get sync bot configured:
 * Create/configure `integrations.json` to point up which messages should gone to the slack (please take a look at `integrations.json.example` file)
@@ -13,6 +13,8 @@ Please approve that login (see email notification) or try to run bot on your loc
 ```shell script
 node index.js
 ```
-#### Update integrations.json
-You can update any integrations and changes will be applied immediately.
-To update username/password - you need to restart application
+#### Notes
+1. If case if you create new skyp chat - don't forget to accept invitation by skype user used in integration
+2. To update username/password - you need to restart application
+3. To reflect integration.json update - you need to restart application
+4. Something broken or not works - you need to restart application
