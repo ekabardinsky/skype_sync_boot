@@ -21,7 +21,7 @@ class UriObjectUtils {
     }
 
     async uploadFile(targetFilePath, originFileName) {
-        const uri = 'https://anonfile.com/api/upload';
+        const uri = 'https://api.anonfile.com/upload';
         var options = {
             method: 'POST',
             uri,
